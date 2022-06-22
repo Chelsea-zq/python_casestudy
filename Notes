@@ -1,0 +1,10 @@
+import pandas as pd
+import os
+import time
+
+pd.set_option("display.max_rows", None)
+pd.set_option("display.max_columns", None)
+
+os.getcwd()
+path = r'C:\Users\zhang\Desktop\inventory mapping'
+os.chdir(path)
