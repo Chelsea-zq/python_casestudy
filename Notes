@@ -8,3 +8,64 @@ pd.set_option("display.max_columns", None)
 os.getcwd()
 path = r'C:\Users\zhang\Desktop\inventory mapping'
 os.chdir(path)
+
+#批量处理Json文件
+
+import pandas as pd
+import numpy as np
+import os
+import json
+
+path = r'C:\Users\zhang\Desktop\json'
+filelist = os.listdir(path)
+
+data_json = pd.DataFrame([])
+data_json_all = pd.DataFrame([])
+
+for json_file in filelist:
+    with open(os.path.join(path,json_file),'r') as f:
+        data = json.loads(f.read())
+        data_json = pd.json_normalize(data,record_path=['items'],meta=['businessUnit'])
+        data_json_all = pd.concat([data_json,data_json_all])
+
+#聚合统计
+data_json_all.onhandAvailableQuantity.sum()
+data_json_all.groupby(['businessUnit','universalProductCode']).sum()
+
+#批量处理Excel workbook中的所有sheet
+
+import pandas as pd
+import xlrd
+import time
+excel_name = r'C:\Users\zhang\Desktop\nike0531.xlsx'
+wb = openpyxl.load_workbook(excel_name)
+sheets = wb.sheetnames
+excel_all = pd.DataFrame()
+
+
+time_begin = time.time()
+
+for i in range(len(sheets)):
+    inv = pd.read_excel(excel_name,sheet_name=i,usecols = [3,4,5,6,7,9],engine='openpyxl')
+    excel_all = pd.concat([inv,excel_all])
+    
+time_end = time.time()
+
+time = time_end - time_begin
+
+#批量处理文件夹中的所有Excel
+
+import os
+os.getcwd()      # 返回当前的工作目录
+os.chdir(r'C:\Users\zhang\Desktop\机器学习\case001_基于随机森林回归算法的气温预测') # 修改当前的工作目录
+import glob
+import pandas as pd
+
+paths = glob.glob('*.csv')
+excel_all = pd.DataFrame()
+
+for path in paths:
+    excel_ = pd.read_csv(path)
+    excel_all = pd.concat([excel_,excel_all])
+
+
