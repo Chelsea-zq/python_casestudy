@@ -87,3 +87,60 @@ while loop:
         loop = False
         print("Iteration is stopped.")
 df = pd.concat(chunks, ignore_index=True)
+
+#导入文本文件
+shopping_list = "/Users/johnreid/Downloads/shopping_list.txt"
+result = []
+with open(shopping_list) as f:
+    line = f.readline()
+    while line:
+        result.append(line.strip().split(" " ))
+        line = f.readline()
+f.close()
+df_from_textfile = pd.DataFrame(results, columns = ["Item", "Quantity"])
+
+#导入多个文件/文件夹
+import glob
+import pandas as pd
+base_path = "/Users/johnreid/Downloads/bbcsport/"
+genres = ["athletics", "cricket", "football", "rugby", "tennis"]
+def read_and_split_file(filename):
+    with open(filename, 'r', encoding="latin-1") as f:
+        lines = f.readlines() # Get lines as a list of strings
+        lines = list(map(str.strip, lines)) # Remove /n characters
+        lines = list(filter(None, lines)) # Remove empty strings
+    return lines
+def get_df_from_genre(path, genre):
+    files = glob.glob(path + genre + "/*.txt")
+    titles = []
+    subtitles = []
+    bodies = []
+    for f in files:
+        lines = read_and_split_file(f)
+        titles.append(lines[0]) # First line is the title
+        subtitles.append(lines[1]) # Second line is the subtitle
+        bodies.append(' '.join(lines[2:])) # Combine all the rest
+    return(pd.DataFrame({
+        'genre': genre,
+        'title': titles,
+        'subtitle': subtitles,
+        'body': bodies
+        })
+    )
+final_df = pd.concat([get_df_from_genre(base_path, g) for g in genres])
+final_df
+
+#远程数据库文件
+host = "localhost"
+database= "suppliers"
+user = "postgres"
+password = "SecurePas$1"
+and then import it into your Python script as follows (you’ll also need the psychopg2 library):
+import psycopg2
+import config
+conn = psycopg2.connect(
+    host=config.host,
+    database=config.database,
+    user=config.user,
+    password=config.password)
+df1 = pd.read_sql_query("SELECT * FROM invoice", conn)
