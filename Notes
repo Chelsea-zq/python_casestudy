@@ -68,4 +68,22 @@ for path in paths:
     excel_ = pd.read_csv(path)
     excel_all = pd.concat([excel_,excel_all])
 
+#根据列名导出到一个workbook
+writer = pd.ExcelWriter('output.xlsx')
+for p in df['province'].unique():
+    df.loc[df['province'] == p].to_excel(writer, sheet_name=p)
+writer.save()
 
+#导入大文件
+reader = pd.read_csv('user.csv',encoding='gbk',low_memory=False,iterator=True)
+loop = True
+chunkSize = 10000000
+chunks = []
+while loop:
+    try:
+        chunk = reader.get_chunk(chunkSize)
+        chunks.append(chunk)
+    except StopIteration:
+        loop = False
+        print("Iteration is stopped.")
+df = pd.concat(chunks, ignore_index=True)
